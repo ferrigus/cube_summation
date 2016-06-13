@@ -7,22 +7,18 @@ namespace App;
 //class Matriz extends Model
 class Matriz
 {
-    private $m, $n, $matriz;
-    function __construct($n, $m)
+    public $matriz;
+    
+    public function inicializarMatriz($n)
     {
-        $this->m = $m;
-        $this->n = $n;
-        $this->inicializarMatriz($n);
-    }
-    private function inicializarMatriz($n)
-    {
-        for ($i = 0; $i <= $n; $i++) {
-            for ($j = 0; $j <= $n; $j++) {
-                for ($k = 0; $k <= $n; $k++) {
+        for ($i = 1; $i <= $n; $i++) {
+            for ($j = 1; $j <= $n; $j++) {
+                for ($k = 1; $k <= $n; $k++) {
                     $this->matriz[$i][$j][$k] = 0;
                 }
             }
         }
+		return $this->matriz;
     }
     public function updateBloque($x, $y, $z, $value)
     {
