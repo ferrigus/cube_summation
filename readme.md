@@ -1,27 +1,46 @@
-# Laravel PHP Framework
+# Cube Sumation
 
-[![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework)
-[![Total Downloads](https://poser.pugx.org/laravel/framework/d/total.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/framework/v/stable.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/framework/v/unstable.svg)](https://packagist.org/packages/laravel/framework)
-[![License](https://poser.pugx.org/laravel/framework/license.svg)](https://packagist.org/packages/laravel/framework)
+Desarrollo de un servicio que permite obtener la sumatoria de un arreglo de tres dimensiones.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as authentication, routing, sessions, queueing, and caching.
+## Objetivos
+- Indicar cuantos casos de prueba se van a realizar.
+- Crear una matriz que inicie en el bloque (1,1,1) y termine en el bloque (N,N,N) por cada caso de prueba definido.
+- Definir los tipos de operaciones que se le pueden realizar a cada matriz:
+    - UPDATE x y z W -> Actualiza el valor de un bloque en donde "x y z" es la posición del bloque y "W" el valor.
+    - QUERY x1 y1 z1 x2 y2 z2 -> Obtiene la sumatoria de los valores en cada bloque contenido en "x" incluyendo "x1" y "x2", contenido en "y" incluyendo "y1" y "y2" y contenido en "z" incluyendo "z1" y "z2".
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb inversion of control container, expressive migration system, and tightly integrated unit testing support give you the tools you need to build any application with which you are tasked.
+## Formato de Entrada
+1.- La primera línea contiene un entero "T", el cual representa la cantidad de casos de prueba.
+2.- Por cada caso de prueba la siguiente línea deberá contener dos enteros "N" y "M" separados por un espacio.
+3.- "N" define el último bloque de la matriz.
+4.- "M" define la cantidad de operaciones que se pueden realizar para cada caso de prueba.
+5.- Operaciones que se ejecutarán a la matriz.
 
-## Official Documentation
+## Restricciones
+1 <= T <= 50
+1 <= N <= 100
+1 <= M <= 1000
+1 <= x1 <= x2 <= N
+1 <= y1 <= y2 <= N
+1 <= z1 <= z2 <= N
+1 <= x,y,z <= N
+-10^9 <= W <= 10^9
 
-Documentation for the framework can be found on the [Laravel website](http://laravel.com/docs).
+## Ejemplos de Entrada /* MÉTODOS GET Y POST*/
+casosprueba:2
+matrix_lines1:4 5
+linea1-1:UPDATE 2 2 2 4
+linea1-2:QUERY 1 1 1 3 3 3
+linea1-3:UPDATE 1 1 1 23
+linea1-4:QUERY 2 2 2 4 4 4
+linea1-5:QUERY 1 1 1 3 3 3
+matrix_lines2:2 4
+linea2-1:UPDATE 2 2 2 1
+linea2-2:QUERY 1 1 1 1 1 1
+linea2-3:QUERY 1 1 1 2 2 2
+linea2-4:QUERY 2 2 2 2 2 2
 
-## Contributing
+## Ejemplos de Salida
+- Las salidas están representadas en formato json.
+- Cuando es una respuesta exitosa, se mostrarán los datos de las operaciones QUERY:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
