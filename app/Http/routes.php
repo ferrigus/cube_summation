@@ -16,4 +16,4 @@
 });*/
 
 
-Route::resource('/', 'CubesumController');
+Route::post('/', 'CubesumController@showCubeSum');
