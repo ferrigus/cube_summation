@@ -76,3 +76,14 @@ y se envía una notificacion. /app/Http/Controllers/ManageDriverController.php
 - Se pudo detectar que se intentaba enviar la notificación desde el mismo método que realiza la confirmación de los datos de entrada.
 - Se crea una clase que solo se encargará de enviar la notificación,
 - De esta forma la refactoricacion es un exto ya que se separaron resposibilidades de clases y métodos.
+
+## Preguntas
+- ¿En qué consiste el principio de Responsabilidad Única? ¿Cual es su propósito?
+	En mi oponión considero que el propósito de responsabilidad única consiste en que cada clase o método creado debe cumplir con una función específica, 
+	el objetivo es que existan mútiples clases que puedan interactuar entre sí para sacar adelante un proceso. Mientras las responssabilidades se dividen al máximo podremos obtener un código 
+	mas amigable y funcional brindando con ello mayor escalibilidad.
+- ¿Qué caracterisiticas debe tener según tu opinión "buen" código o código limpio?
+	- Debe expresar claramente sus propósito e intenciones al ser definido.
+	- Lograr en la medida de lo posible que otro desarrollador pueda entender el código rápidamente.
+	- Mientras mas enfocado sea el código mejores resultados se obtendrán.
+	- Tratar de abarcar en pocas líneas de código la mayoría de los procesos definiendo las clases y métodos de forma adecuada.
