@@ -1,0 +1,15 @@
+A continuación se explica la dinámica de trabajo para este proyecto.
+
+En primera instancia y luego de analizar el problema, decidí crear la clase Matriz, en ella se crearon
+tres métodos que permiten por ejemplo inicializar, actualizar y consultar una matriz, dicha matriz se carga en memoria para acceder
+a ella en un proceso inmediato. En esta clase garantizamos la persistencia de datos
+ya que solo requerimos de la información en un pequeño instante de tiempo.
+
+Una vez definida la clase principal se procedió a crear un controlador quien será el
+encargado de administrar la información garantizando que la información que llegue al modelo sea la esperada.
+
+El controlador se apoya en otras clases para validar la información que ingresa, con esto garantizamos que cada clase
+tenga una responsabilidad exclusiva al momento de procesar la información.
+
+
+

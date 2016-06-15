@@ -9,24 +9,38 @@ class CubesumController extends Controller
 {
 	var $array_input;
 	var $campos;
+	var $camposaux;
+	var $camposaux2;
 	var $matriz;
 	var $postrquest;
 	var $rules;
 	var $messages;
-
+	var $matrizope;
+	var $operaciones;
+	var $operacionesold;
+	var $suma;
+	var $mostrardatos;
 
 	public function  __construct(){
 		$this->array_input=array();
 		$this->campos=array();
+		$this->camposaux=array();
+		$this->camposaux2=array();
 		$this->matriz=new Matriz();
 		$this->postrquest=new CubeSumPostRequest();
 		$this->rules=array();
 		$this->messages=array();
+		$this->matrizope=array();
+		$this->operaciones=array();
+		$this->operacionesold=0;
+		$this->suma=0;
+		$this->mostrardatos=array();
 	}
 	public function showCubeSum(Request $request)
 	{
 		$this->array_input=$request->all();
 		$i=0;
+		$x = $y = $z = $x1 = $x2 = $y1 = $y2 = $z1 = $z2 = 0;
 		foreach ($this->array_input as $key => $valor) {
 			$this->campos[$i]=$valor;
 			$i++;
@@ -44,26 +58,24 @@ class CubesumController extends Controller
 		//RESTRICCIONES
 		if (!$validator->fails()) {
 			for($i=1;$i<=$this->campos[0];$i++){
-				$mostrarsuma = 0;
-				//$mostrardatos = array();
-				//$matrizope=explode(" ",$request->get('matrizope'.$i.''));
-				//$matrizope=explode(" ",$this->campos[$i]);
-				//dd($this->campos[$i]);
-				$this->rules=$this->postrquest->rules(1, $this->campos);
-				//dd($this->rules);
-				$this->messages=$this->postrquest->messages(1, $this->campos);
-				$validator = Validator::make($this->campos, $this->rules, $this->messages);
-				//$request['cantidadmatrizope'.$i.'']=count($matrizope);
 
-				/*if(count($matrizope)==2){
-					$request['ultimobloque'.$i.'']=$matrizope[0];
-					$request['numoperaciones'.$i.'']=$matrizope[1];
+				if(count($this->campos)>1){
+
+					if (array_key_exists($this->operacionesold+$i,$this->campos)){
+						$this->matrizope=explode(" ",$this->campos[$this->operacionesold+$i]);
+						$this->camposaux[0]=count($this->matrizope);
+						if($this->camposaux[0]==2){
+							$this->camposaux[1]=$this->matrizope[0];
+							$this->camposaux[2]=$this->matrizope[1];
+						}
+					}else{
+						$this->camposaux=array();
+					}
 				}
-				$validator = Validator::make($request->all(), [
-					'cantidadmatrizope'.$i.''=>'required|numeric|min:2|max:2', // 1 <= N <= 100 -- ÚLTIMO BLOQUE DE LA MATRIZ
-					'ultimobloque'.$i.''=>'required|numeric|min:1|max:100', // 1 <= N <= 100 -- ÚLTIMO BLOQUE DE LA MATRIZ
-					'numoperaciones'.$i.''=>'required|numeric|min:1|max:1000', // 1 <= M <= 1000 -- NÚMERO DE OPERACIONES (UPDATE & QUERY)
-				]);*/
+				$this->rules=$this->postrquest->rules(1, $this->camposaux);
+				$this->messages=$this->postrquest->messages(1, $this->camposaux,$i);
+				$validator = Validator::make($this->camposaux, $this->rules, $this->messages);
+
 				if ($validator->fails()) {
 					$errors = $validator->errors();
 					return response()->json([
@@ -71,86 +83,78 @@ class CubesumController extends Controller
 						'message' => $errors
 					], 422);
 				}else{
-					$this->matriz->inicializarMatriz($request['ultimobloque'.$i.'']); //INICIALIZO LA MATRIZ
+					$this->matriz->inicializarMatriz($this->camposaux[1]); //INICIALIZO LA MATRIZ
 				}
-				for($j=1;$j<=$matrizope[1];$j++){
-					$operacion=explode(" ",$request->get('operacion'.$i."-".$j.''));
-					$request['cantidadoperacion'.$i."-".$j.'']=count($operacion);
-					if(strtoupper($operacion[0])=='UPDATE'){
-						if(count($operacion)==5){
-							$request['x'.$i."-".$j.'']=$operacion[1];
-							$request['y'.$i."-".$j.'']=$operacion[2];
-							$request['z'.$i."-".$j.'']=$operacion[3];
-							$request['w'.$i."-".$j.'']=$operacion[4];
-						}
-						//dd($request['x'.$i."-".$j.'']);
-						$validator = Validator::make($request->all(), [
-							'cantidadoperacion'.$i."-".$j.''=>'required|numeric|min:5|max:5', // 1 <= N <= 100 -- ÚLTIMO BLOQUE DE LA MATRIZ
-							'x'.$i."-".$j.''=>' required|numeric|min:1|max:'.$request['ultimobloque'.$i.''].'', // 1 <= N <= 100 -- ÚLTIMO BLOQUE DE LA MATRIZ
-							'y'.$i."-".$j.''=>' required|numeric|min:1|max:'.$request['ultimobloque'.$i.''].'', // 1 <= N <= 100 -- ÚLTIMO BLOQUE DE LA MATRIZ
-							'z'.$i."-".$j.''=>' required|numeric|min:1|max:'.$request['ultimobloque'.$i.''].'', // 1 <= N <= 100 -- ÚLTIMO BLOQUE DE LA MATRIZ
-							'w'.$i."-".$j.''=>' required|numeric|min:'.pow(-10, 9).'|max:'.pow(10, 9).'', // -10^9 <= W <= 10^9 -- VALOR PARA CADA BLOQUE
-						]);
-						if ($validator->fails()) {
-							$errors = $validator->errors();
-							return response()->json([
-								'success' => false,
-								'message' => $errors
-							], 422);
-						}else{
-							$updatebloque=$this->matriz->updateBloque(
-								$request['x'.$i."-".$j.''],
-								$request['y'.$i."-".$j.''],
-								$request['z'.$i."-".$j.''],
-								$request['w'.$i."-".$j.'']
-							);
-						}
 
-					}elseif(strtoupper($operacion[0])=='QUERY'){
-						if(count($operacion)==7){
-							$request['x1'.$i."-".$j.'']=$operacion[1];
-							$request['y1'.$i."-".$j.'']=$operacion[2];
-							$request['z1'.$i."-".$j.'']=$operacion[3];
-							$request['x2'.$i."-".$j.'']=$operacion[4];
-							$request['y2'.$i."-".$j.'']=$operacion[5];
-							$request['z2'.$i."-".$j.'']=$operacion[6];
-						}
 
-						$validator = Validator::make($request->all(), [
-							'cantidadoperacion'.$i."-".$j.''=>'required|numeric|size:7', // 1 <= N <= 100 -- ÚLTIMO BLOQUE DE LA MATRIZ
-							'x1'.$i."-".$j.''=>' required|numeric|between:1,'.$request['x2'.$i."-".$j.''].'|max:'.$request['ultimobloque'.$i.''].'', // 1 <= N <= 100 -- ÚLTIMO BLOQUE DE LA MATRIZ
-							'y1'.$i."-".$j.''=>' required|numeric|between:1,'.$request['y2'.$i."-".$j.''].'|max:'.$request['ultimobloque'.$i.''].'', // 1 <= N <= 100 -- ÚLTIMO BLOQUE DE LA MATRIZ
-							'z1'.$i."-".$j.''=>' required|numeric|between:1,'.$request['z2'.$i."-".$j.''].'|max:'.$request['ultimobloque'.$i.''].'', // 1 <= N <= 100 -- ÚLTIMO BLOQUE DE LA MATRIZ
-							'x2'.$i."-".$j.''=>' required|numeric|min:'.$request['x1'.$i."-".$j.''].'|max:'.$request['ultimobloque'.$i.''].'', // 1 <= N <= 100 -- ÚLTIMO BLOQUE DE LA MATRIZ
-							'y2'.$i."-".$j.''=>' required|numeric|min:'.$request['y1'.$i."-".$j.''].'|max:'.$request['ultimobloque'.$i.''].'', // 1 <= N <= 100 -- ÚLTIMO BLOQUE DE LA MATRIZ
-							'z2'.$i."-".$j.''=>' required|numeric|min:'.$request['z1'.$i."-".$j.''].'|max:'.$request['ultimobloque'.$i.''].'', // 1 <= N <= 100 -- ÚLTIMO BLOQUE DE LA MATRIZ
-						]);
-						if ($validator->fails()) {
-							$errors = $validator->errors();
-							return response()->json([
-								'success' => false,
-								'message' => $errors
-							], 422);
+				for($j=1;$j<=$this->camposaux[2];$j++){
+					if (array_key_exists($this->operacionesold+$i+1,$this->campos)){
+						//dd($this->campos[2]);
+						$this->operaciones=explode(" ",$this->campos[$this->operacionesold+$i+1]);
+						$this->camposaux2[0]=count($this->operaciones);
+
+						if($this->camposaux2[0]==5 || $this->camposaux2[0]==7) {
+							for($k=1;$k<=$this->camposaux2[0];$k++){
+								$this->camposaux2[$k] = $this->operaciones[$k-1];
+							}
+							if($this->camposaux2[0]==5) {
+								$y2=0;
+								$z2=0;
+							}else{
+								$y2=$this->operaciones[5];
+								$z2=$this->operaciones[6];
+							}
 						}else{
-							$mostrarsuma=$this->matriz->sumatoria(
-								$request['x1'.$i."-".$j.''],
-								$request['y1'.$i."-".$j.''],
-								$request['z1'.$i."-".$j.''],
-								$request['x2'.$i."-".$j.''],
-								$request['y2'.$i."-".$j.''],
-								$request['z2'.$i."-".$j.'']
-							);
-							array_push($mostrardatos,$mostrarsuma);
+							$this->camposaux2[0]=2;
+							$this->camposaux2[1]=0;
+							$this->camposaux2[2]=0;
+							$this->camposaux2[3]=0;
+							$this->camposaux2[4]=0;
+							$this->camposaux2[5]=0;
+							$this->camposaux2[6]=0;
 						}
 					}else{
+						$this->camposaux2[0]=2;
+						$this->camposaux2[1]=0;
+						$this->camposaux2[2]=0;
+						$this->camposaux2[3]=0;
+						$this->camposaux2[4]=0;
+						$this->camposaux2[5]=0;
+						$this->camposaux2[6]=0;
+					}
+					$this->operacionesold++;
+
+					$this->rules=$this->postrquest->rules($this->camposaux2[0], $this->camposaux2,$this->camposaux[1],$this->camposaux2[2],$this->camposaux2[3],$this->camposaux2[4],$this->camposaux2[5],$y2,$z2);
+					$this->messages=$this->postrquest->messages($this->camposaux2[0], $this->camposaux2,$i,$j);
+					$validator = Validator::make($this->camposaux2, $this->rules, $this->messages);
+
+					if ($validator->fails()) {
 						$errors = $validator->errors();
 						return response()->json([
 							'success' => false,
-							'message' => "El campo debe empezar con UPDATE o QUERY"
+							'message' => $errors
 						], 422);
+					}else{
+						if($this->camposaux2[0]==5) {
+							$this->matriz->updateBloque(
+								$this->camposaux2[2],
+								$this->camposaux2[3],
+								$this->camposaux2[4],
+								$this->camposaux2[5]
+							);
+						}else if($this->camposaux2[0]==7) {
+							$this->suma=$this->matriz->sumatoria(
+								$this->camposaux2[2],
+								$this->camposaux2[3],
+								$this->camposaux2[4],
+								$this->camposaux2[5],
+								$this->camposaux2[6],
+								$this->camposaux2[7]
+							);
+							array_push($this->mostrardatos,$this->suma);
+						}
 					}
 				}
-
 			}
 		}else{
 			$errors = $validator->errors();
@@ -161,7 +165,7 @@ class CubesumController extends Controller
 		}
 		return response()->json([
 			'success' => true,
-			'data' => $mostrardatos
+			'data' => $this->mostrardatos
 		], 200);
 	}
 }
