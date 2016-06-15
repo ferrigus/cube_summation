@@ -15,4 +15,6 @@
     return view('welcome');
 });*/
 
-Route::post('/', 'CubesumController@showCubeSum');
+Route::post('/cubesummation', 'CubesumController@showCubeSum');
+
+Route::resource('/', 'CubeSumProcessController');

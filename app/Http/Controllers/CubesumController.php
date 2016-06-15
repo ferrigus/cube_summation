@@ -163,6 +163,9 @@ class CubesumController extends Controller
 				'message' => $errors
 			], 422);
 		}
+		if(count($this->mostrardatos)==0){
+			array_push($this->mostrardatos,'Ninguna operacion fue un QUERY. No se muestran datos.');
+		}
 		return response()->json([
 			'success' => true,
 			'data' => $this->mostrardatos

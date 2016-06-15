@@ -27,21 +27,18 @@ Desarrollo de un servicio que permite obtener la sumatoria de un arreglo de tres
 - (-10^9) <= W <= (10^9)
 
 ## Ejemplos de Entrada. MÉTODO (REQUEST BY POST)
-- Los campos de entradas deben tener formato campo:valor, no importa el nombre del campo.
-- Se permite realizar peticiones a través de un formluario Web.
-- Ejemplo:
-    - 0:2
-    - 1:4 5
-    - 2:UPDATE 2 2 2 15
-    - 3:QUERY 1 1 1 3 3 3
-    - 4:UPDATE 1 1 1 50
-    - 5:QUERY 2 2 2 4 4 4
-    - 6:QUERY 1 1 1 3 3 3
-    - 7:2 4
-    - 8:UPDATE 1 1 1 8
-    - 9:QUERY 1 1 1 1 1 1
-    - 10:QUERY 1 1 1 2 2 2
-    - 11:QUERY 2 2 2 2 2 2
+    - 2
+    - 4 5
+    - UPDATE 2 2 2 15
+    - QUERY 1 1 1 3 3 3
+    - UPDATE 1 1 1 50
+    - QUERY 2 2 2 4 4 4
+    - QUERY 1 1 1 3 3 3
+    - 2 4
+    - UPDATE 1 1 1 8
+    - QUERY 1 1 1 1 1 1
+    - QUERY 1 1 1 2 2 2
+    - QUERY 2 2 2 2 2 2
 
 ## Ejemplos de Salida
 - Las salidas están representadas en formato json.
@@ -56,6 +53,9 @@ Desarrollo de un servicio que permite obtener la sumatoria de un arreglo de tres
 - CubesumController. Controlador encargado de gestionar la información. /app/Http/Controllers/CubesumController.php
 - CubeSumPostRequest. Clase que contiene las reglas y mensajes de error personalizados. /app/Http/Requests/CubeSumPostRequest.php
     Junto con la clase Validator de Laravel permiten crear restricciones de manera practica y funcional.
+- Se crea la vista para consumir el servicio y mostrar su funcionamiento de forma amigable.
+	- CubeSumProcessController. Controlador que invoca a la vista. /app/Http/Controllers/CubeSumProcessController.php
+	- index.blade.php. Vista principal. /resources/views/index.blade.php
 
 ## Responsabilidades de las clases
 - En primera instancia y luego de analizar el problema, decidí crear la clase Matriz, en ella se crearon
