@@ -10,23 +10,23 @@ Desarrollo de un servicio que permite obtener la sumatoria de un arreglo de tres
     - QUERY x1 y1 z1 x2 y2 z2 -> Obtiene la sumatoria de los valores en cada bloque contenido en "x" incluyendo "x1" y "x2", contenido en "y" incluyendo "y1" y "y2" y contenido en "z" incluyendo "z1" y "z2".
 
 ## Formato de Entrada
-1.- La primera línea contiene un entero "T", el cual representa la cantidad de casos de prueba.
-2.- Por cada caso de prueba la siguiente línea deberá contener dos enteros "N" y "M" separados por un espacio.
-3.- "N" define el último bloque de la matriz.
-4.- "M" define la cantidad de operaciones que se pueden realizar para cada caso de prueba.
-5.- Operaciones que se ejecutarán a la matriz.
+- La primera línea contiene un entero "T", el cual representa la cantidad de casos de prueba.
+- Por cada caso de prueba la siguiente línea deberá contener dos enteros "N" y "M" separados por un espacio.
+- "N" define el último bloque de la matriz.
+- "M" define la cantidad de operaciones que se pueden realizar para cada caso de prueba.
+- Operaciones que se ejecutarán a la matriz.
 
 ## Restricciones
-1 <= T <= 50
-1 <= N <= 100
-1 <= M <= 1000
-1 <= x1 <= x2 <= N
-1 <= y1 <= y2 <= N
-1 <= z1 <= z2 <= N
-1 <= x,y,z <= N
--10^9 <= W <= 10^9
+- 1 <= T <= 50
+- 1 <= N <= 100
+- 1 <= M <= 1000
+- 1 <= x1 <= x2 <= N
+- 1 <= y1 <= y2 <= N
+- 1 <= z1 <= z2 <= N
+- 1 <= x,y,z <= N
+- (-10^9) <= W <= (10^9)
 
-## Ejemplos de Entrada /* MÉTODOS GET Y POST*/
+## Ejemplos de Entrada MÉTODO (REQUEST BY POST)
 casosprueba:2
 matrix_lines1:4 5
 linea1-1:UPDATE 2 2 2 4

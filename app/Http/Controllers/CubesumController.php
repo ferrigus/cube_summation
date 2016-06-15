@@ -1,59 +1,69 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
-
 use App\Http\Requests;
-
+use App\Http\Requests\CubeSumPostRequest;
 use Validator;
-
 use App\Matriz;
-
 class CubesumController extends Controller
 {
+	var $array_input;
+	var $campos;
 	var $matriz;
-    
-    public function  __construct(){
-        $this->matriz=new Matriz();
-    }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
-    {
-		$matrizope = array();
-		$operaciones = array();
-		$matriziniciada = array();
-		$mostrarsuma = 0;
-		$mostrardatos = array();
+	var $postrquest;
+	var $rules;
+	var $messages;
 
-		$validator = Validator::make($request->all(), [
-			'casosprueba'=>'required|numeric|min:1|max:50', // 1 <= T <= 50
-		]);
 
+	public function  __construct(){
+		$this->array_input=array();
+		$this->campos=array();
+		$this->matriz=new Matriz();
+		$this->postrquest=new CubeSumPostRequest();
+		$this->rules=array();
+		$this->messages=array();
+	}
+	public function showCubeSum(Request $request)
+	{
+		$this->array_input=$request->all();
+		$i=0;
+		foreach ($this->array_input as $key => $valor) {
+			$this->campos[$i]=$valor;
+			$i++;
+		}
+		if(count($this->campos)==0){
+			return response()->json([
+				'success' => false,
+				'message' => "Error. Ninguna informacion fue suministrada."
+			], 422);
+		}else{
+			$this->rules=$this->postrquest->rules(0, $this->campos);
+			$this->messages=$this->postrquest->messages(0, $this->campos);
+			$validator = Validator::make($this->campos, $this->rules, $this->messages);
+		}
 		//RESTRICCIONES
 		if (!$validator->fails()) {
-			for($i=1;$i<=$request->get('casosprueba');$i++){
-				$matriziniciada = array();
+			for($i=1;$i<=$this->campos[0];$i++){
 				$mostrarsuma = 0;
 				//$mostrardatos = array();
-				$matrizope=explode(" ",$request->get('matrizope'.$i.''));
-				$request['cantidadmatrizope'.$i.'']=count($matrizope);
-				
-				if(count($matrizope)==2){
+				//$matrizope=explode(" ",$request->get('matrizope'.$i.''));
+				//$matrizope=explode(" ",$this->campos[$i]);
+				//dd($this->campos[$i]);
+				$this->rules=$this->postrquest->rules(1, $this->campos);
+				//dd($this->rules);
+				$this->messages=$this->postrquest->messages(1, $this->campos);
+				$validator = Validator::make($this->campos, $this->rules, $this->messages);
+				//$request['cantidadmatrizope'.$i.'']=count($matrizope);
+
+				/*if(count($matrizope)==2){
 					$request['ultimobloque'.$i.'']=$matrizope[0];
 					$request['numoperaciones'.$i.'']=$matrizope[1];
 				}
-
 				$validator = Validator::make($request->all(), [
 					'cantidadmatrizope'.$i.''=>'required|numeric|min:2|max:2', // 1 <= N <= 100 -- ÚLTIMO BLOQUE DE LA MATRIZ
 					'ultimobloque'.$i.''=>'required|numeric|min:1|max:100', // 1 <= N <= 100 -- ÚLTIMO BLOQUE DE LA MATRIZ
 					'numoperaciones'.$i.''=>'required|numeric|min:1|max:1000', // 1 <= M <= 1000 -- NÚMERO DE OPERACIONES (UPDATE & QUERY)
-				]);
-
+				]);*/
 				if ($validator->fails()) {
 					$errors = $validator->errors();
 					return response()->json([
@@ -61,9 +71,8 @@ class CubesumController extends Controller
 						'message' => $errors
 					], 422);
 				}else{
-					$matriziniciada = $this->matriz->inicializarMatriz($request['ultimobloque'.$i.'']);
+					$this->matriz->inicializarMatriz($request['ultimobloque'.$i.'']); //INICIALIZO LA MATRIZ
 				}
-
 				for($j=1;$j<=$matrizope[1];$j++){
 					$operacion=explode(" ",$request->get('operacion'.$i."-".$j.''));
 					$request['cantidadoperacion'.$i."-".$j.'']=count($operacion);
@@ -82,7 +91,6 @@ class CubesumController extends Controller
 							'z'.$i."-".$j.''=>' required|numeric|min:1|max:'.$request['ultimobloque'.$i.''].'', // 1 <= N <= 100 -- ÚLTIMO BLOQUE DE LA MATRIZ
 							'w'.$i."-".$j.''=>' required|numeric|min:'.pow(-10, 9).'|max:'.pow(10, 9).'', // -10^9 <= W <= 10^9 -- VALOR PARA CADA BLOQUE
 						]);
-
 						if ($validator->fails()) {
 							$errors = $validator->errors();
 							return response()->json([
@@ -97,7 +105,7 @@ class CubesumController extends Controller
 								$request['w'.$i."-".$j.'']
 							);
 						}
-						
+
 					}elseif(strtoupper($operacion[0])=='QUERY'){
 						if(count($operacion)==7){
 							$request['x1'.$i."-".$j.'']=$operacion[1];
@@ -107,7 +115,6 @@ class CubesumController extends Controller
 							$request['y2'.$i."-".$j.'']=$operacion[5];
 							$request['z2'.$i."-".$j.'']=$operacion[6];
 						}
-						
 
 						$validator = Validator::make($request->all(), [
 							'cantidadoperacion'.$i."-".$j.''=>'required|numeric|size:7', // 1 <= N <= 100 -- ÚLTIMO BLOQUE DE LA MATRIZ
@@ -118,7 +125,6 @@ class CubesumController extends Controller
 							'y2'.$i."-".$j.''=>' required|numeric|min:'.$request['y1'.$i."-".$j.''].'|max:'.$request['ultimobloque'.$i.''].'', // 1 <= N <= 100 -- ÚLTIMO BLOQUE DE LA MATRIZ
 							'z2'.$i."-".$j.''=>' required|numeric|min:'.$request['z1'.$i."-".$j.''].'|max:'.$request['ultimobloque'.$i.''].'', // 1 <= N <= 100 -- ÚLTIMO BLOQUE DE LA MATRIZ
 						]);
-
 						if ($validator->fails()) {
 							$errors = $validator->errors();
 							return response()->json([
@@ -136,97 +142,26 @@ class CubesumController extends Controller
 							);
 							array_push($mostrardatos,$mostrarsuma);
 						}
-
-
 					}else{
-							$errors = $validator->errors();
-							return response()->json([
-								'success' => false,
-								'message' => "El campo debe empezar con UPDATE o QUERY"
-							], 422);
+						$errors = $validator->errors();
+						return response()->json([
+							'success' => false,
+							'message' => "El campo debe empezar con UPDATE o QUERY"
+						], 422);
 					}
 				}
-				
+
 			}
-
-
 		}else{
 			$errors = $validator->errors();
-            return response()->json([
-                'success' => false,
-                'message' => $errors
-            ], 422);
+			return response()->json([
+				'success' => false,
+				'message' => $errors
+			], 422);
 		}
-
 		return response()->json([
 			'success' => true,
 			'data' => $mostrardatos
 		], 200);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
+	}
 }
