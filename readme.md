@@ -1,4 +1,4 @@
-# Cube Sumation
+# Cube Summation
 
 Desarrollo de un servicio que permite obtener la sumatoria de un arreglo de tres dimensiones.
 
